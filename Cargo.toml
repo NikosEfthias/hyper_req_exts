@@ -1,0 +1,18 @@
+[package]
+name = "hyper_req_exts"
+version = "0.1.0"
+edition = "2021"
+author = "nikos efthias<nikos@mugsoft.io>"
+description = "extension helpers for hyper handlers"
+license = "GPL-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+hyper = { version = "0.14.20", default-features = false }
+serde = { version = "1.0", default-features = false, optional = true }
+serde_json = { version = "1.0", default-features = false, optional = true }
+serde_urlencoded = { version = "0.7.1", default-features = false, optional = true }
+[features]
+json = ["serde", "serde_json"]
+urlencoded = ["serde", "serde_urlencoded"]
