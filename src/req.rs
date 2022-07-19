@@ -1,16 +1,16 @@
 use hyper::body::HttpBody;
 use tap::Pipe;
 
-use serde::de::DeserializeOwned;
-
 use crate::BoxFuture;
 
 pub trait ReqExt<'a>
 {
 	#[cfg(feature = "urlencoded")]
-	fn body_urlencoded<T: DeserializeOwned>(&'a mut self) -> BoxFuture<'a, crate::Result<T>>;
+	fn body_urlencoded<T: serde::de::DeserializeOwned>(
+		&'a mut self,
+	) -> BoxFuture<'a, crate::Result<T>>;
 	#[cfg(feature = "json")]
-	fn body_json<T: DeserializeOwned>(&'a mut self) -> BoxFuture<'a, crate::Result<T>>;
+	fn body_json<T: serde::de::DeserializeOwned>(&'a mut self) -> BoxFuture<'a, crate::Result<T>>;
 	fn body_raw_bytes(&'a mut self) -> BoxFuture<'a, crate::Result<Vec<u8>>>;
 	fn body_raw_bytes_with_max_size(
 		&'a mut self,
@@ -23,7 +23,9 @@ where
 	<B as hyper::body::HttpBody>::Error: std::error::Error + Send + Sync + 'static,
 {
 	#[cfg(feature = "urlencoded")]
-	fn body_urlencoded<T: DeserializeOwned>(&'a mut self) -> BoxFuture<'a, crate::Result<T>>
+	fn body_urlencoded<T: serde::de::DeserializeOwned>(
+		&'a mut self,
+	) -> BoxFuture<'a, crate::Result<T>>
 //{{{
 	{
 		Box::pin(async move {
@@ -31,7 +33,7 @@ where
 		})
 	} //}}}
 	#[cfg(feature = "json")]
-	fn body_json<T: DeserializeOwned>(&'a mut self) -> BoxFuture<'a, crate::Result<T>>
+	fn body_json<T: serde::de::DeserializeOwned>(&'a mut self) -> BoxFuture<'a, crate::Result<T>>
 //{{{
 	{
 		Box::pin(async move {
