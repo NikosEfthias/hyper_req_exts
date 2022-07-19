@@ -1,8 +1,8 @@
 [package]
 name = "hyper_req_exts"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
-author = "nikos efthias<nikos@mugsoft.io>"
+authors = ["nikos efthias<nikos@mugsoft.io>"]
 description = "extension helpers for hyper handlers"
 license = "GPL-2.0"
 
@@ -15,6 +15,5 @@ serde_json = { version = "1.0", optional = true }
 serde_urlencoded = { version = "0.7.1", default-features = false, optional = true }
 tap = "1.0.1"
 [features]
-default = ["json", "urlencoded"]
 json = ["serde", "serde_json"]
 urlencoded = ["serde", "serde_urlencoded"]
