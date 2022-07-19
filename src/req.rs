@@ -16,6 +16,7 @@ pub trait ReqExt<'a>
 		&'a mut self,
 		size: u64,
 	) -> BoxFuture<'a, crate::Result<Vec<u8>>>;
+	fn basic_auth(&'a self) -> Option<(String, String)>;
 }
 impl<'a> ReqExt<'a> for hyper::Request<Body>
 {
@@ -69,6 +70,24 @@ impl<'a> ReqExt<'a> for hyper::Request<Body>
 				.await?
 				.to_vec()
 				.pipe(Ok)
+		})
+	} //}}}
+
+	fn basic_auth(&'a self) -> Option<(String, String)>
+//{{{
+	{
+		self.headers().get("Authorization").and_then(|h| {
+			let s = h.to_str().ok()?;
+			base64::decode(s.strip_prefix("Basic ")?)
+				.ok()?
+				.as_slice()
+				.pipe(String::from_utf8_lossy)
+				.split(':')
+				.pipe(|mut s| {
+					let uname = s.next()?;
+					let pwd = s.next()?;
+					Some((uname.to_string(), pwd.to_string()))
+				})
 		})
 	} //}}}
 }
