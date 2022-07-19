@@ -1,6 +1,7 @@
 mod req;
-use std::{error::Error, future::Future, pin::Pin};
+use std::{future::Future, pin::Pin};
 
 pub use req::*;
-pub type Result<T> = std::result::Result<T, Box<dyn Error + Send + Sync + 'static>>;
-pub type BoxFuture<'a, T> = Pin<Box<dyn Future<Output = T> + 'a>>;
+pub type BoxFuture<'a, T> = Pin<Box<dyn Future<Output = T> + Send + Sync + 'a>>;
+pub type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
+pub type Result<T> = std::result::Result<T, Error>;

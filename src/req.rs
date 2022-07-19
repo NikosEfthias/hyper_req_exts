@@ -1,4 +1,4 @@
-use hyper::body::HttpBody;
+use hyper::{body::HttpBody, Body};
 use tap::Pipe;
 
 use crate::BoxFuture;
@@ -17,10 +17,7 @@ pub trait ReqExt<'a>
 		size: u64,
 	) -> BoxFuture<'a, crate::Result<Vec<u8>>>;
 }
-impl<'a, B> ReqExt<'a> for hyper::Request<B>
-where
-	B: hyper::body::HttpBody + std::marker::Unpin,
-	<B as hyper::body::HttpBody>::Error: std::error::Error + Send + Sync + 'static,
+impl<'a> ReqExt<'a> for hyper::Request<Body>
 {
 	#[cfg(feature = "urlencoded")]
 	fn body_urlencoded<T: serde::de::DeserializeOwned>(
