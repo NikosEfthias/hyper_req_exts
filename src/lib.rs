@@ -1,8 +1,6 @@
-#[cfg(test)]
-mod tests {
-	#[test]
-	fn it_works() {
-		let result = 2 + 2;
-		assert_eq!(result, 4);
-	}
-}
+mod req;
+use std::{error::Error, future::Future, pin::Pin};
+
+pub use req::*;
+pub type Result<T> = std::result::Result<T, Box<dyn Error>>;
+pub type BoxFuture<'a, T> = Pin<Box<dyn Future<Output = T> + 'a>>;
