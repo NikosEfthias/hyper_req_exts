@@ -20,7 +20,7 @@ pub trait ReqExt<'a>
 impl<'a, B> ReqExt<'a> for hyper::Request<B>
 where
 	B: hyper::body::HttpBody + std::marker::Unpin,
-	<B as hyper::body::HttpBody>::Error: std::error::Error + Send + Sync + 'static,
+	<B as hyper::body::HttpBody>::Error: std::error::Error + 'static,
 {
 	#[cfg(feature = "urlencoded")]
 	fn body_urlencoded<T: serde::de::DeserializeOwned>(
