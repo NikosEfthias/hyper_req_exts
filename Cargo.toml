@@ -17,5 +17,6 @@ serde_json = { version = "1.0", optional = true }
 serde_urlencoded = { version = "0.7.1", default-features = false, optional = true }
 tap = "1.0.1"
 [features]
+default = ["routerify"]
 json = ["serde", "serde_json"]
 urlencoded = ["serde", "serde_urlencoded"]
