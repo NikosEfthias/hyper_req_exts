@@ -1,6 +1,7 @@
 mod req;
-use std::{future::Future, pin::Pin};
+use std::{fmt::Display, future::Future, pin::Pin};
 
+use hyper::{body::HttpBody, Body};
 pub use req::*;
 pub type BoxFuture<'a, T> = Pin<Box<dyn Future<Output = T> + Send + Sync + 'a>>;
 pub type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
@@ -19,4 +20,25 @@ where
 		.serve(service)
 		.await
 		.expect("server failed");
+}
+
+pub trait IntoResponse
+{
+	type Body: HttpBody + Send + Sync + 'static;
+	fn into_response(self) -> hyper::Response<Self::Body>;
+}
+
+impl<T> IntoResponse for T
+where
+	T: Display,
+{
+	type Body = Body;
+	fn into_response(self) -> hyper::Response<Self::Body>
+	{
+		hyper::Response::builder()
+			.status(hyper::StatusCode::OK)
+			.header(hyper::header::CONTENT_TYPE, "text/plain")
+			.body(self.to_string().into())
+			.unwrap()
+	}
 }
