@@ -1,11 +1,14 @@
 mod req;
 use std::{fmt::Display, future::Future, pin::Pin};
 
+pub use hyper;
 use hyper::{body::HttpBody, Body};
 pub use req::*;
 pub type BoxFuture<'a, T> = Pin<Box<dyn Future<Output = T> + Send + Sync + 'a>>;
 pub type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
 pub type Result<T> = std::result::Result<T, Error>;
+#[cfg(feature = "routerify")]
+pub use routerify;
 
 #[cfg(feature = "routerify")]
 pub async fn start_server<B, E>(addr: std::net::SocketAddr, router: routerify::Router<B, E>)
