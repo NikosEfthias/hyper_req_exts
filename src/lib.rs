@@ -1,3 +1,4 @@
+pub mod prelude;
 mod req;
 use std::{fmt::Display, future::Future, pin::Pin};
 #[cfg(feature = "routerify")]
