@@ -14,7 +14,7 @@ where
 		.await
 		.expect("server failed");
 }
-pub async fn cors_allow_all(mut resp: Response<Body>) -> crate::Result<Response<Body>>
+pub async fn cors_allow_all<E>(mut resp: Response<Body>) -> Result<Response<Body>, E>
 {
 	resp.headers_mut().tap_mut(|it| {
 		it.insert("Access-Control-Allow-Origin", HeaderValue::from_static("*"));
