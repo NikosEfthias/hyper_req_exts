@@ -17,6 +17,7 @@ pub trait ReqExt<'a>
 		size: u64,
 	) -> BoxFuture<'a, crate::Result<Vec<u8>>>;
 	fn basic_auth(&'a self) -> Option<(String, String)>;
+	fn body_text(&'a mut self) -> BoxFuture<'a, crate::Result<String>>;
 }
 impl<'a> ReqExt<'a> for hyper::Request<Body>
 {
@@ -90,4 +91,11 @@ impl<'a> ReqExt<'a> for hyper::Request<Body>
 				})
 		})
 	} //}}}
+	fn body_text(&'a mut self) -> BoxFuture<'a, crate::Result<String>>
+	{
+		Box::pin(async move {
+			let body = self.body_raw_bytes().await?;
+			Ok(String::from_utf8_lossy(&body).to_string())
+		})
+	}
 }
