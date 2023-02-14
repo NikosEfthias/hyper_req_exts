@@ -1,3 +1,4 @@
+use base64::{prelude::BASE64_STANDARD as b64, Engine};
 use hyper::{body::HttpBody, Body};
 use tap::Pipe;
 
@@ -78,7 +79,7 @@ impl<'a> ReqExt<'a> for hyper::Request<Body> {
     {
         self.headers().get("Authorization").and_then(|h| {
             let s = h.to_str().ok()?;
-            base64::decode(s.strip_prefix("Basic ")?)
+            b64.decode(s.strip_prefix("Basic ")?)
                 .ok()?
                 .as_slice()
                 .pipe(String::from_utf8_lossy)
