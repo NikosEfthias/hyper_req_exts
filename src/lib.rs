@@ -11,6 +11,12 @@ pub type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
 pub type Result<T> = std::result::Result<T, Error>;
 #[cfg(feature = "routerify")]
 pub use routerify_exts::*;
+#[cfg(feature = "serde")]
+pub use serde;
+#[cfg(feature = "serde_json")]
+pub use serde_json;
+#[cfg(feature = "serde_urlencoded")]
+pub use serde_urlencoded;
 
 pub trait IntoResponse {
     type Body: HttpBody + Send + Sync + 'static;
