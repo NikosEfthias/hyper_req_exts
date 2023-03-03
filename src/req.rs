@@ -24,32 +24,24 @@ impl<'a> ReqExt<'a> for hyper::Request<Body> {
     #[cfg(feature = "urlencoded")]
     fn body_urlencoded<T: serde::de::DeserializeOwned>(
         &'a mut self,
-    ) -> BoxFuture<'a, crate::Result<T>>
-//{{{
-    {
+    ) -> BoxFuture<'a, crate::Result<T>> {
         Box::pin(async move {
             serde_urlencoded::from_bytes(&self.body_raw_bytes().await?).map_err(Into::into)
         })
-    } //}}}
+    }
     #[cfg(feature = "json")]
-    fn body_json<T: serde::de::DeserializeOwned>(&'a mut self) -> BoxFuture<'a, crate::Result<T>>
-//{{{
-    {
+    fn body_json<T: serde::de::DeserializeOwned>(&'a mut self) -> BoxFuture<'a, crate::Result<T>> {
         Box::pin(async move {
             serde_json::from_slice(&self.body_raw_bytes().await?).map_err(Into::into)
         })
-    } //}}}
-    fn body_raw_bytes(&'a mut self) -> BoxFuture<'a, crate::Result<Vec<u8>>>
-//{{{
-    {
+    }
+    fn body_raw_bytes(&'a mut self) -> BoxFuture<'a, crate::Result<Vec<u8>>> {
         self.body_raw_bytes_with_max_size(1024)
-    } //}}}
+    }
     fn body_raw_bytes_with_max_size(
         &'a mut self,
         max_size: u64,
-    ) -> BoxFuture<'a, crate::Result<Vec<u8>>>
-//{{{
-    {
+    ) -> BoxFuture<'a, crate::Result<Vec<u8>>> {
         Box::pin(async move {
             let size = self.size_hint();
             match size.upper() {
@@ -72,11 +64,9 @@ impl<'a> ReqExt<'a> for hyper::Request<Body> {
                 .to_vec()
                 .pipe(Ok)
         })
-    } //}}}
+    }
 
-    fn basic_auth(&'a self) -> Option<(String, String)>
-//{{{
-    {
+    fn basic_auth(&'a self) -> Option<(String, String)> {
         self.headers().get("Authorization").and_then(|h| {
             let s = h.to_str().ok()?;
             b64.decode(s.strip_prefix("Basic ")?)
@@ -90,7 +80,7 @@ impl<'a> ReqExt<'a> for hyper::Request<Body> {
                     Some((uname.to_string(), pwd.to_string()))
                 })
         })
-    } //}}}
+    }
     fn bearer_auth(&'a self) -> Option<String> {
         self.headers().get("Authorization").and_then(|h| {
             let s = h.to_str().ok()?;

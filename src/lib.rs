@@ -11,8 +11,6 @@ pub type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
 pub type Result<T> = std::result::Result<T, Error>;
 #[cfg(feature = "routerify")]
 pub use routerify_exts::*;
-#[cfg(feature = "serde")]
-pub use serde;
 #[cfg(feature = "serde_json")]
 pub use serde_json;
 #[cfg(feature = "serde_urlencoded")]
@@ -34,5 +32,21 @@ where
             .header(hyper::header::CONTENT_TYPE, "text/plain")
             .body(self.to_string().into())
             .unwrap()
+    }
+}
+#[cfg(feature = "serde_json")]
+pub trait IntoJsonResponse {
+    fn into_json_response(self) -> crate::Result<hyper::Response<Body>>;
+}
+#[cfg(feature = "serde_json")]
+impl<T> IntoJsonResponse for T
+where
+    T: serde::Serialize,
+{
+    fn into_json_response(self) -> crate::Result<hyper::Response<Body>> {
+        Ok(hyper::Response::builder()
+            .status(hyper::StatusCode::OK)
+            .header(hyper::header::CONTENT_TYPE, "application/json")
+            .body(serde_json::to_string(&self)?.into())?)
     }
 }
