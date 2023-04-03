@@ -18,26 +18,20 @@ pub async fn cors_allow_all_with_request_info<E>(
     mut resp: Response<Body>,
     req_info: routerify::RequestInfo,
 ) -> Result<Response<Body>, E> {
-    let origin = req_info
-        .headers()
-        .get("origin")
-        .or_else(|| req_info.headers().get("Origin"))
-        .cloned()
-        .unwrap_or_else(|| HeaderValue::from_static("*"));
     resp.headers_mut().tap_mut(|it| {
-        it.insert("Access-Control-Allow-Origin", origin.clone());
-        it.insert(
-            "Access-Control-Allow-Credentials",
-            HeaderValue::from_static("true"),
-        );
-        it.insert(
-            "Access-Control-Allow-Headers",
-            HeaderValue::from_static("*"),
-        );
-        it.insert(
-            "Access-Control-Allow-Methods",
-            HeaderValue::from_static("*"),
-        );
+        if let Some(origin) = req_info.headers().get("origin") {
+            it.insert("Access-Control-Allow-Origin", origin.clone());
+            it.insert(
+                "Access-Control-Allow-Credentials",
+                HeaderValue::from_static("true"),
+            );
+        };
+        if let Some(headers) = req_info.headers().get("Access-Control-Request-Headers") {
+            it.insert("Access-Control-Allow-Headers", headers.clone());
+        }
+        if let Some(methods) = req_info.headers().get("Access-Control-Request-Method") {
+            it.insert("Access-Control-Allow-Methods", methods.clone());
+        }
     });
     Ok(resp)
 }
