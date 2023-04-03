@@ -27,6 +27,10 @@ pub async fn cors_allow_all_with_request_info<E>(
     resp.headers_mut().tap_mut(|it| {
         it.insert("Access-Control-Allow-Origin", origin.clone());
         it.insert(
+            "Access-Control-Allow-Credentials",
+            HeaderValue::from_static("true"),
+        );
+        it.insert(
             "Access-Control-Allow-Headers",
             HeaderValue::from_static("*"),
         );
