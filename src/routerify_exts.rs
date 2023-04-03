@@ -15,21 +15,19 @@ where
         .expect("server failed");
 }
 pub async fn cors_allow_all<E>(mut resp: Response<Body>) -> Result<Response<Body>, E> {
-    let origin = resp
-        .headers()
-        .get("Origin")
-        .cloned()
-        .unwrap_or(HeaderValue::from_static("*"));
-    resp.headers_mut().tap_mut(|it| {
-        it.insert("Access-Control-Allow-Origin", origin.clone());
-        it.insert(
-            "Access-Control-Allow-Headers",
-            HeaderValue::from_static("*"),
-        );
-        it.insert(
-            "Access-Control-Allow-Methods",
-            HeaderValue::from_static("*"),
-        );
-    });
+    let origin = resp.headers().get("origin").cloned();
+    if let Some(origin) = origin {
+        resp.headers_mut().tap_mut(|it| {
+            it.insert("Access-Control-Allow-Origin", origin.clone());
+            it.insert(
+                "Access-Control-Allow-Headers",
+                HeaderValue::from_static("*"),
+            );
+            it.insert(
+                "Access-Control-Allow-Methods",
+                HeaderValue::from_static("*"),
+            );
+        });
+    }
     Ok(resp)
 }
